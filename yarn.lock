@@ -31,21 +31,6 @@
     dotfast "^1.0.3"
     merge-all-objects "^1.0.4"
 
-"@cogenv/object@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@cogenv/object/-/object-1.1.3.tgz#ffdd1f4708a2a24a855929c4dbf042506e491250"
-  integrity sha512-EBzVbXN3B615swiI5hqpMVzm0hqjw7EU4nJqNA8Cckk1YsRcy19Dx+PZ+N27syjxXD9q9x5wpO6OuVanu/knuQ==
-  dependencies:
-    dotfast "^1.0.3"
-    merge-all-objects "^1.0.4"
-
-"@cogenv/typed@^1.0.9":
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/@cogenv/typed/-/typed-1.0.9.tgz#08872ac21685d35e4ca4d867f4392277ecbd813e"
-  integrity sha512-20IpdxcJ/326qKVn7rclsC63o9sPmov5VipyJnWSa5y9igc7JGfTLYAhhQka/Phq6Ba5qAqJcr+AmKSuLxeSrQ==
-  dependencies:
-    merge-all-objects "^1.0.4"
-
 "@eslint/eslintrc@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.1.tgz#442763b88cecbe3ee0ec7ca6d6dd6168550cbf14"
@@ -541,15 +526,6 @@ cls-hooked@^4.2.2:
     async-hook-jl "^1.7.6"
     emitter-listener "^1.0.1"
     semver "^5.4.1"
-
-cogenv@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/cogenv/-/cogenv-1.0.2.tgz#9c33c1459010e08e4bb28e24076e2815e039d730"
-  integrity sha512-jc55LRucLfwAlhba1ObE5kCOELRk3NsOc3AEMdcBZ285r73UgPK1uP8NcW/q+OpDeb/uotwx2tXHgomyl5b7og==
-  dependencies:
-    "@cogenv/core" "^1.1.6"
-    "@cogenv/object" "^1.1.3"
-    "@cogenv/typed" "^1.0.9"
 
 color-convert@^1.9.0:
   version "1.9.3"
