@@ -11,54 +11,50 @@ dotenv.config();
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
 // persist this object in your app.
 const ACTIVE_SHOPIFY_SHOPS = {};
-let memorySessionStorage = new Shopify.Session.MemorySessionStorage();
-let keys;
-let auth;
 
-function initAuth() {
-	Shopify.Context.initialize({
-		API_KEY: process.env['SHOPIFY_API_KEY'],
-		API_SECRET_KEY: process.env['SHOPIFY_API_SECRET'],
-		SCOPES: process.env['SCOPES'].split(','),
-		HOST_NAME: process.env['HOST'].replace(/https:\/\//, ''),
-		API_VERSION: ApiVersion.October20,
-		IS_EMBEDDED_APP: true,
-		// This should be replaced with your preferred storage strategy
-		SESSION_STORAGE: memorySessionStorage
-	});
+console.log('init --------------------');
 
-	keys = [Shopify.Context.API_SECRET_KEY];
-	auth = createShopifyAuth({
-		async afterAuth(ctx) {
-			// Access token and shop available in ctx.state.shopify
-			const { shop, accessToken, scope } = ctx.state.shopify;
-			const host = ctx.query.host;
-			ACTIVE_SHOPIFY_SHOPS[shop] = scope;
-			const response = await Shopify.Webhooks.Registry.register({
-				shop,
-				accessToken,
-				path: '/webhooks',
-				topic: 'APP_UNINSTALLED',
-				webhookHandler: async (topic, shop, body) => {
-					delete ACTIVE_SHOPIFY_SHOPS[shop];
-				}
-			});
+Shopify.Context.initialize({
+	API_KEY: process.env['SHOPIFY_API_KEY'],
+	API_SECRET_KEY: process.env['SHOPIFY_API_SECRET'],
+	SCOPES: process.env['SCOPES'].split(','),
+	HOST_NAME: process.env['HOST'].replace(/https:\/\//, ''),
+	API_VERSION: ApiVersion.October20,
+	IS_EMBEDDED_APP: true,
+	// This should be replaced with your preferred storage strategy
+	SESSION_STORAGE: new Shopify.Session.MemorySessionStorage()
+});
 
-			if (!response.success) {
-				console.log(`Failed to register APP_UNINSTALLED webhook: ${response.result}`);
+let keys = [Shopify.Context.API_SECRET_KEY];
+let auth = createShopifyAuth({
+	async afterAuth(ctx) {
+		// Access token and shop available in ctx.state.shopify
+		const { shop, accessToken, scope } = ctx.state.shopify;
+		const host = ctx.query.host;
+		ACTIVE_SHOPIFY_SHOPS[shop] = scope;
+		const response = await Shopify.Webhooks.Registry.register({
+			shop,
+			accessToken,
+			path: '/webhooks',
+			topic: 'APP_UNINSTALLED',
+			webhookHandler: async (topic, shop, body) => {
+				delete ACTIVE_SHOPIFY_SHOPS[shop];
 			}
+		});
 
-			// Redirect to app with shop parameter upon auth
-			ctx.redirect(`/?shop=${shop}&host=${host}`);
+		if (!response.success) {
+			console.log(`Failed to register APP_UNINSTALLED webhook: ${response.result}`);
 		}
-	});
-}
+
+		// Redirect to app with shop parameter upon auth
+		ctx.redirect(`/?shop=${shop}&host=${host}`);
+	}
+});
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ request }) {
 	const shop = request.query.get('shop');
 	if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
-		initAuth();
 
 		let ctx = {};
 		ctx = {
@@ -94,7 +90,7 @@ export async function handle({ request }) {
 				ctx.status = 301;
 			},
 			status: 200,
-			throw: function (code) {
+			throw: function(code) {
 				ctx.status = code;
 			}
 		};
