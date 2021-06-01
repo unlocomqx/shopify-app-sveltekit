@@ -19,5 +19,6 @@ shopify serve
 ``` 
 
 ## Troubleshooting
+If you encounter a 500 error, clear the browser cache and retry (it's redirect cache issue)
 If you encounter a 403 error, make sure to clear the cookies then retry shopify serve again.
 If you encounter another issue, you can report it [here](https://github.com/unlocomqx/shopify-app-sveltekit/issues)
