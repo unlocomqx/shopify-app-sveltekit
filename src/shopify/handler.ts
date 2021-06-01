@@ -1,10 +1,11 @@
 import shopifyAuth from '@shopify/koa-shopify-auth';
 import { ApiVersion, Shopify } from '@shopify/shopify-api';
-import dotenv from 'dotenv';
 import Cookies from 'cookies';
+import dotenv from 'dotenv';
+import type { DefaultContext } from 'koa';
 
 // quirk of vite (shopifyAuth is not a function on prod build)
-let createShopifyAuth = typeof shopifyAuth === 'function' ? shopifyAuth : shopifyAuth.default;
+const createShopifyAuth = typeof shopifyAuth === 'function' ? shopifyAuth : (shopifyAuth as any).default;
 
 dotenv.config();
 
@@ -13,19 +14,19 @@ dotenv.config();
 const ACTIVE_SHOPIFY_SHOPS = {};
 
 Shopify.Context.initialize({
-	API_KEY: process.env['SHOPIFY_API_KEY'],
-	API_SECRET_KEY: process.env['SHOPIFY_API_SECRET'],
-	SCOPES: process.env['SCOPES'].split(','),
-	HOST_NAME: process.env['HOST'].replace(/https:\/\//, ''),
-	API_VERSION: ApiVersion.October20,
+	API_KEY        : process.env['SHOPIFY_API_KEY'],
+	API_SECRET_KEY : process.env['SHOPIFY_API_SECRET'],
+	SCOPES         : process.env['SCOPES'].split(','),
+	HOST_NAME      : process.env['HOST'].replace(/https:\/\//, ''),
+	API_VERSION    : ApiVersion.October20,
 	IS_EMBEDDED_APP: true,
 	// This should be replaced with your preferred storage strategy
 	SESSION_STORAGE: new Shopify.Session.MemorySessionStorage()
 });
 
-let keys = [Shopify.Context.API_SECRET_KEY];
-let auth = createShopifyAuth({
-	async afterAuth(ctx) {
+const keys = [Shopify.Context.API_SECRET_KEY];
+const auth = createShopifyAuth({
+	async afterAuth (ctx) {
 		// Access token and shop available in ctx.state.shopify
 		const { shop, accessToken, scope } = ctx.state.shopify;
 		const host = ctx.query.host;
@@ -33,36 +34,36 @@ let auth = createShopifyAuth({
 		const response = await Shopify.Webhooks.Registry.register({
 			shop,
 			accessToken,
-			path: '/webhooks',
-			topic: 'APP_UNINSTALLED',
+			path          : '/webhooks',
+			topic         : 'APP_UNINSTALLED',
 			webhookHandler: async (topic, shop, body) => {
 				delete ACTIVE_SHOPIFY_SHOPS[shop];
 			}
 		});
 
 		if (!response.success) {
-			console.log(`Failed to register APP_UNINSTALLED webhook: ${response.result}`);
+			console.log(`Failed to register APP_UNINSTALLED webhook: ${ response.result }`);
 		}
 
 		// Redirect to app with shop parameter upon auth
-		ctx.redirect(`/?shop=${shop}&host=${host}`);
+		ctx.redirect(`/?shop=${ shop }&host=${ host }`);
 	}
 });
 
 /** @type {import('@sveltejs/kit').Handle} */
-export async function handle({ request }) {
+export async function handle ({ request }) {
 	const shop = request.query.get('shop');
 	if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
 
-		let ctx = {};
+		let ctx: DefaultContext = {};
 		ctx = {
-			host: request.host,
-			path: request.path,
-			query: Object.fromEntries(request.query),
-			req: {
+			host      : request.host,
+			path      : request.path,
+			query     : Object.fromEntries(request.query),
+			req       : {
 				...request
 			},
-			res: {
+			res       : {
 				getHeader: (header) => {
 					return ctx.headers[header];
 				},
@@ -76,19 +77,19 @@ export async function handle({ request }) {
 					ctx.headers[header] = value;
 				}
 			},
-			header: request.headers,
-			headers: request.headers,
+			header    : request.headers,
+			headers   : request.headers,
 			connection: {
 				encrypted: true
 			},
-			state: {},
-			redirect: (url) => {
+			state     : {},
+			redirect  : (url) => {
 				ctx.headers['location'] = url;
 				// the redirect won't work witout this
 				ctx.status = 301;
 			},
-			status: 200,
-			throw: function(code) {
+			status    : 200,
+			throw     : function(code) {
 				ctx.status = code;
 			}
 		};
@@ -96,7 +97,7 @@ export async function handle({ request }) {
 		if (request.headers.cookie) {
 			ctx.headers['set-cookie'] = request.headers.cookie.split(';').map((s) => s.trim());
 		}
-		const cookies = new Cookies(ctx, ctx.res, { keys, secure: true });
+		const cookies = new Cookies(ctx as any, ctx.res, { keys, secure: true });
 		ctx.cookies = cookies;
 
 		try {
@@ -109,8 +110,8 @@ export async function handle({ request }) {
 
 		return {
 			headers: ctx.headers,
-			body: ctx.body,
-			status: ctx.status
+			body   : ctx.body,
+			status : ctx.status
 		};
 	}
 }
