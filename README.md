@@ -17,3 +17,7 @@ shopify connect
 shopify serve
 # Shopify serve will update the urls of your app and will use ngrok to make your local server visible to the outside
 ``` 
+
+## Troubleshooting
+If you encounter a 403 error, make sure to clear the cookies then retry shopify serve again.
+If you encounter another issue, you can report it [here](https://github.com/unlocomqx/shopify-app-sveltekit/issues)
