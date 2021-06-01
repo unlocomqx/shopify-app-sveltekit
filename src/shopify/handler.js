@@ -12,8 +12,6 @@ dotenv.config();
 // persist this object in your app.
 const ACTIVE_SHOPIFY_SHOPS = {};
 
-console.log('init --------------------');
-
 Shopify.Context.initialize({
 	API_KEY: process.env['SHOPIFY_API_KEY'],
 	API_SECRET_KEY: process.env['SHOPIFY_API_SECRET'],
