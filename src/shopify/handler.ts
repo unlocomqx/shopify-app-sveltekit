@@ -108,10 +108,6 @@ export async function handle ({ request }) {
 			console.log(e.message);
 		}
 
-		return {
-			headers: ctx.headers,
-			body   : ctx.body,
-			status : ctx.status
-		};
+		return ctx;
 	}
 }
