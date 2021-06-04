@@ -64,9 +64,18 @@ function convert (request) {
 			},
 			setHeader: (header, value) => {
 				header = header.toLowerCase();
+				const cookies: string[] = ctx.headers[header] || [];
 				if (header === 'set-cookie') {
-					ctx.headers[header] = ctx.headers[header] || [];
-					value = [...ctx.headers[header], ...value];
+					// remove duplicates
+					(value as string[]).forEach(cookie => {
+						const cookie_name = cookie.split('=')?.[0];
+						for (let i = cookies.length - 1; i >= 0; i--) {
+							if (cookies[i].indexOf(cookie_name + '=') === 0) {
+								cookies.splice(i, 1);
+							}
+						}
+					});
+					value = [...cookies, ...value];
 					ctx.headers.cookie = value.join(';');
 				}
 				ctx.headers[header] = value;
