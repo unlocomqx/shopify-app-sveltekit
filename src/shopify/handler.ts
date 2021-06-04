@@ -52,7 +52,7 @@ const auth = createShopifyAuth({
 
 function convert (request) {
 	let ctx: DefaultContext = {};
-	return {
+	ctx = {
 		host      : request.host,
 		path      : request.path,
 		query     : Object.fromEntries(request.query),
@@ -89,19 +89,21 @@ function convert (request) {
 			ctx.status = code;
 		}
 	};
+
+	if (request.headers.cookie) {
+		ctx.headers['set-cookie'] = request.headers.cookie.split(';').map((s) => s.trim());
+	}
+	ctx.cookies = new Cookies(ctx as any, ctx.res, { keys, secure: true });
+
+	return ctx;
 }
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle ({ request }) {
 	const shop = request.query.get('shop');
+
 	if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
-
 		const ctx = convert(request);
-
-		if (request.headers.cookie) {
-			ctx.headers['set-cookie'] = request.headers.cookie.split(';').map((s) => s.trim());
-		}
-		ctx.cookies = new Cookies(ctx as any, ctx.res, { keys, secure: true });
 
 		try {
 			await auth(ctx, () => {
