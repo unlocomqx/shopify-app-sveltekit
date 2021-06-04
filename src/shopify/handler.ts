@@ -110,7 +110,7 @@ function convert (request) {
 export async function handle ({ request }) {
 	const shop = request.query.get('shop');
 
-	let activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
+	const activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
 
 	if (activeShop === undefined) {
 		const ctx = convert(request);
