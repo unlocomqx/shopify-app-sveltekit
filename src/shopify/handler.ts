@@ -30,7 +30,6 @@ const auth = createShopifyAuth({
 		// Access token and shop available in ctx.state.shopify
 		const { shop, accessToken, scope } = ctx.state.shopify;
 		const host = ctx.query.host;
-		console.log('store shop');
 		ACTIVE_SHOPIFY_SHOPS[shop] = { scope, host };
 		const response = await Shopify.Webhooks.Registry.register({
 			shop,
@@ -38,7 +37,6 @@ const auth = createShopifyAuth({
 			path          : '/webhooks',
 			topic         : 'APP_UNINSTALLED',
 			webhookHandler: async (topic, shop, body) => {
-				console.log('delete shop');
 				delete ACTIVE_SHOPIFY_SHOPS[shop];
 			}
 		});
@@ -46,7 +44,6 @@ const auth = createShopifyAuth({
 		if (!response.success) {
 			console.log(`Failed to register APP_UNINSTALLED webhook: ${ response.result }`);
 		}
-		console.log(host);
 		// Redirect to app with shop parameter upon auth
 		ctx.redirect(`/?shop=${ shop }&host=${ host }`);
 	}
@@ -106,10 +103,7 @@ export async function handle ({ request }) {
 
 	let activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
 
-	console.log(activeShop);
-
 	if (activeShop === undefined) {
-		console.log('shop not found');
 		const ctx = convert(request);
 
 		try {
