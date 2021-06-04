@@ -88,9 +88,8 @@ function convert (request) {
 		},
 		state     : {},
 		redirect  : (url) => {
+			ctx.status = 302;
 			ctx.headers['location'] = url;
-			// the redirect won't work witout this
-			ctx.status = 301;
 		},
 		status    : 200,
 		throw     : function(code) {
@@ -113,6 +112,15 @@ export async function handle ({ request }) {
 	const activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
 
 	if (activeShop === undefined) {
+
+		if (request.path === '/' && request.query.get('hmac')) {
+			return {
+				status : 302,
+				headers: {
+					location: `/auth?shop=${ shop }`
+				}
+			};
+		}
 		const ctx = convert(request);
 
 		try {
@@ -124,11 +132,15 @@ export async function handle ({ request }) {
 		}
 
 		return ctx;
-	} else if (request.path == '/auth') {
+	}
+
+
+	// handle /auth because sveltekit doesn't know about it
+	if (request.path === '/auth') {
 		// if shop is already stored, redirect to root
 
 		return {
-			status : 301,
+			status : 302,
 			headers: {
 				location: `/?shop=${ shop }&host=${ activeShop.host }`
 			}
