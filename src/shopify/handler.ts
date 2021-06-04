@@ -50,55 +50,58 @@ const auth = createShopifyAuth({
 	}
 });
 
+function convert (request) {
+	let ctx: DefaultContext = {};
+	return {
+		host      : request.host,
+		path      : request.path,
+		query     : Object.fromEntries(request.query),
+		req       : {
+			...request
+		},
+		res       : {
+			getHeader: (header) => {
+				return ctx.headers[header];
+			},
+			setHeader: (header, value) => {
+				header = header.toLowerCase();
+				if (header === 'set-cookie') {
+					ctx.headers[header] = ctx.headers[header] || [];
+					value = [...ctx.headers[header], ...value];
+					ctx.headers.cookie = value.join(';');
+				}
+				ctx.headers[header] = value;
+			}
+		},
+		header    : request.headers,
+		headers   : request.headers,
+		connection: {
+			encrypted: true
+		},
+		state     : {},
+		redirect  : (url) => {
+			ctx.headers['location'] = url;
+			// the redirect won't work witout this
+			ctx.status = 301;
+		},
+		status    : 200,
+		throw     : function(code) {
+			ctx.status = code;
+		}
+	};
+}
+
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle ({ request }) {
 	const shop = request.query.get('shop');
 	if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
 
-		let ctx: DefaultContext = {};
-		ctx = {
-			host      : request.host,
-			path      : request.path,
-			query     : Object.fromEntries(request.query),
-			req       : {
-				...request
-			},
-			res       : {
-				getHeader: (header) => {
-					return ctx.headers[header];
-				},
-				setHeader: (header, value) => {
-					header = header.toLowerCase();
-					if (header === 'set-cookie') {
-						ctx.headers[header] = ctx.headers[header] || [];
-						value = [...ctx.headers[header], ...value];
-						ctx.headers.cookie = value.join(';');
-					}
-					ctx.headers[header] = value;
-				}
-			},
-			header    : request.headers,
-			headers   : request.headers,
-			connection: {
-				encrypted: true
-			},
-			state     : {},
-			redirect  : (url) => {
-				ctx.headers['location'] = url;
-				// the redirect won't work witout this
-				ctx.status = 301;
-			},
-			status    : 200,
-			throw     : function(code) {
-				ctx.status = code;
-			}
-		};
+		const ctx = convert(request);
 
 		if (request.headers.cookie) {
 			ctx.headers['set-cookie'] = request.headers.cookie.split(';').map((s) => s.trim());
 		}
-		const cookies = new Cookies(ctx as any, ctx.res, { keys, secure: true });
-		ctx.cookies = cookies;
+		ctx.cookies = new Cookies(ctx as any, ctx.res, { keys, secure: true });
 
 		try {
 			await auth(ctx, () => {
