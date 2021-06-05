@@ -1,5 +1,5 @@
 <script>
-  import { initAppBridge } from "../shopify/bridge.js";
+	import { initAppBridge } from "../shopify/bridge.js";
 
   if (typeof window !== "undefined") {
     try {

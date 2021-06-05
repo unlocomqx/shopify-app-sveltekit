@@ -111,9 +111,20 @@ export async function handle ({ request }) {
 
 	const activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
 
-	if (activeShop === undefined) {
+	if (request.path === '/') {
 
-		if (request.path === '/' && request.query.get('hmac')) {
+		const host = request.query.get('host');
+
+		if (activeShop && !host) {
+			return {
+				status : 302,
+				headers: {
+					location: `/?shop=${ shop }&host=${ activeShop.host }`
+				}
+			};
+		}
+
+		if (!activeShop) {
 			return {
 				status : 302,
 				headers: {
@@ -121,6 +132,10 @@ export async function handle ({ request }) {
 				}
 			};
 		}
+	}
+
+	if (activeShop === undefined) {
+
 		const ctx = convert(request);
 
 		try {
