@@ -35,6 +35,10 @@ const config = {
 						{
 							from: 'ENV_SHOPIFY_API_KEY',
 							to: process.env.SHOPIFY_API_KEY
+						},
+						{
+							from: 'ENV_HOST',
+							to: process.env.HOST
 						}
 					]
 				})
