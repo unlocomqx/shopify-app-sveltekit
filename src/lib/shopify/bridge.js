@@ -2,7 +2,6 @@ import createApp from '@shopify/app-bridge';
 import { Redirect } from '@shopify/app-bridge/actions/index';
 
 export function initAppBridge() {
-	console.log('initAppBridge');
 	const urlParams = new URLSearchParams(window.location.search);
 	const shop = urlParams.get('shop');
 	const host = urlParams.get('host');
