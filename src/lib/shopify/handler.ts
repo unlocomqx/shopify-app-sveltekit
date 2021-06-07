@@ -162,7 +162,6 @@ export async function handle ({ request }) {
 	// handle /auth because sveltekit doesn't know about it
 	if (request.path === '/auth') {
 		// if shop is already stored, redirect to root
-
 		return {
 			status : 302,
 			headers: {
