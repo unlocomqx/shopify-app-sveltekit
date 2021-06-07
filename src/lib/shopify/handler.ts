@@ -115,6 +115,15 @@ export async function handle ({ request }) {
 
 		const host = request.query.get('host');
 
+		if (!shop && !host) {
+			return {
+				status : 302,
+				headers: {
+					location: `${ process.env['HOST'] }/?shop=${ process.env['SHOP'] }`
+				}
+			};
+		}
+
 		if (activeShop && !host) {
 			return {
 				status : 302,

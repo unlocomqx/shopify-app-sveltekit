@@ -39,6 +39,10 @@ const config = {
 						{
 							from: 'ENV_HOST',
 							to: process.env.HOST
+						},
+						{
+							from: 'ENV_SHOP',
+							to: process.env.SHOP
 						}
 					]
 				})

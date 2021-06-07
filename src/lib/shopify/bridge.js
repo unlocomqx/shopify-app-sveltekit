@@ -6,6 +6,11 @@ export function initAppBridge() {
 	const shop = urlParams.get('shop');
 	const host = urlParams.get('host');
 
+	if (!shop && !host) {
+		location.href = 'ENV_HOST/?shop=ENV_SHOP';
+		return;
+	}
+
 	if (host) {
 		const createAppFn = typeof createApp === 'function' ? createApp : createApp.default;
 		const app = createAppFn({
