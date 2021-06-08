@@ -1,8 +1,11 @@
 <script lang='ts'>
-	import gql from 'graphql-tag';
+	import { gql } from '@apollo/client/core';
 	import { query } from 'svelte-apollo';
 
-	let products = query(gql`
+	let products;
+
+	function getProducts () {
+		products = query(gql`
 		query {
 			products (first: 5) {
 				edges {
@@ -14,9 +17,6 @@
   		}
 		}
 	`);
-
-	function getProducts () {
-		products.refetch();
 	}
 </script>
 
