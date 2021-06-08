@@ -4,7 +4,7 @@ import fs from 'fs';
 // Saves the sesson to JSON
 // On prod save the session to the DB and use encryption
 
-const SESSION_FILE = 'sessions.json';
+const SESSION_FILE = '.storage/sessions.json';
 
 const storeCallback = async (session: Session) => {
 	let sessions = {};

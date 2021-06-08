@@ -11,7 +11,7 @@ const createShopifyAuth = typeof shopifyAuth === 'function' ? shopifyAuth : (sho
 
 dotenv.config();
 
-const ACTIVE_SHOPIFY_SHOPS_FILE = path.resolve('shops.json');
+const ACTIVE_SHOPIFY_SHOPS_FILE = path.resolve('.storage/shops.json');
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
 // persist this object in your app.
 const ACTIVE_SHOPIFY_SHOPS = {};
