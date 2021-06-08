@@ -1,9 +1,10 @@
-<script context="module">
+<script context='module'>
 	export const prerender = true;
 </script>
 
 <script>
 	import Counter from '$lib/Counter/index.svelte';
+	import Products from '$lib/Products.svelte';
 </script>
 
 <svelte:head>
@@ -12,10 +13,10 @@
 
 <section>
 	<h1>
-		<div class="welcome">
+		<div class='welcome'>
 			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
-				<img src="svelte-welcome.png" alt="Welcome" />
+				<source srcset='svelte-welcome.webp' type='image/webp' />
+				<img src='svelte-welcome.png' alt='Welcome' />
 			</picture>
 		</div>
 
@@ -27,6 +28,8 @@
 	</h2>
 
 	<Counter />
+
+	<Products />
 </section>
 
 <style>

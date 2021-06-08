@@ -2,6 +2,9 @@ import createApp from '@shopify/app-bridge';
 import { Redirect } from '@shopify/app-bridge/actions/index';
 
 export function getApp(shop = null, host) {
+	if (typeof window === 'undefined') {
+		return null;
+	}
 	if (!shop) {
 		const urlParams = new URLSearchParams(window.location.search);
 		shop = urlParams.get('shop');
