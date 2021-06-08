@@ -26,23 +26,25 @@ const config = {
 			},
 			resolve: {
 				alias: {
-					'@shopify/shopify-api/dist/error': '@shopify/shopify-api/dist/error.js'
-				}
+					'@shopify/shopify-api/dist/error': '@shopify/shopify-api/dist/error.js',
+					// workaround for https://github.com/timhall/svelte-apollo/issues/97
+					'svelte-apollo': '/node_modules/svelte-apollo/dist/svelte-apollo.es.js'
+				},
 			},
 			plugins: [
 				replaceCodePlugin({
 					replacements: [
 						{
-							from: 'ENV_SHOPIFY_API_KEY',
-							to: process.env.SHOPIFY_API_KEY
+							from: /process.env.SHOPIFY_API_KEY/g,
+							to: JSON.stringify(process.env.SHOPIFY_API_KEY)
 						},
 						{
-							from: 'ENV_HOST',
-							to: process.env.HOST
+							from: /process.env.HOST/g,
+							to: JSON.stringify(process.env.HOST)
 						},
 						{
-							from: 'ENV_SHOP',
-							to: process.env.SHOP
+							from: /process.env.SHOP/g,
+							to: JSON.stringify(process.env.SHOP)
 						}
 					]
 				})
@@ -52,3 +54,4 @@ const config = {
 };
 
 export default config;
+
