@@ -1,27 +1,22 @@
+import { initContext } from '$lib/shopify/context';
 import { convert } from '$lib/shopify/request';
 import shopifyAuth from '@shopify/koa-shopify-auth';
-import { ApiVersion, Shopify } from '@shopify/shopify-api';
+import { Shopify } from '@shopify/shopify-api';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
 // quirk of vite (shopifyAuth is not a function on prod build)
 const createShopifyAuth = typeof shopifyAuth === 'function' ? shopifyAuth : (shopifyAuth as any).default;
 
 dotenv.config();
 
+const ACTIVE_SHOPIFY_SHOPS_FILE = path.resolve('shops.json');
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
 // persist this object in your app.
 const ACTIVE_SHOPIFY_SHOPS = {};
 
-Shopify.Context.initialize({
-	API_KEY        : process.env['SHOPIFY_API_KEY'],
-	API_SECRET_KEY : process.env['SHOPIFY_API_SECRET'],
-	SCOPES         : process.env['SCOPES'].split(','),
-	HOST_NAME      : process.env['HOST'].replace(/https:\/\//, ''),
-	API_VERSION    : ApiVersion.April21,
-	IS_EMBEDDED_APP: true,
-	// This should be replaced with your preferred storage strategy
-	SESSION_STORAGE: new Shopify.Session.MemorySessionStorage()
-});
+initContext();
 
 const auth = createShopifyAuth({
 	async afterAuth (ctx) {
@@ -29,6 +24,8 @@ const auth = createShopifyAuth({
 		const { shop, accessToken, scope } = ctx.state.shopify;
 		const host = ctx.query.host;
 		ACTIVE_SHOPIFY_SHOPS[shop] = { scope, host };
+		saveShopToDb(shop, ACTIVE_SHOPIFY_SHOPS[shop]);
+
 		const response = await Shopify.Webhooks.Registry.register({
 			shop,
 			accessToken,
@@ -36,6 +33,7 @@ const auth = createShopifyAuth({
 			topic         : 'APP_UNINSTALLED',
 			webhookHandler: async (topic, shop, body) => {
 				delete ACTIVE_SHOPIFY_SHOPS[shop];
+				deleteShopFromDb(shop);
 			}
 		});
 
@@ -47,11 +45,46 @@ const auth = createShopifyAuth({
 	}
 });
 
+function getShopFromDb (shop) {
+	if (fs.existsSync(ACTIVE_SHOPIFY_SHOPS_FILE)) {
+		const saved = fs.readFileSync(ACTIVE_SHOPIFY_SHOPS_FILE).toString();
+		const activeShops = JSON.parse(saved || '{}');
+		return activeShops[shop];
+	}
+	return null;
+}
+
+function saveShopToDb (shop, shopData) {
+	let activeShops = {};
+	if (fs.existsSync(ACTIVE_SHOPIFY_SHOPS_FILE)) {
+		const saved = fs.readFileSync(ACTIVE_SHOPIFY_SHOPS_FILE).toString();
+		activeShops = JSON.parse(saved || '{}');
+	}
+	// save active shop to file, in prod this should be saved to the db
+	activeShops[shop] = shopData;
+	fs.writeFileSync(ACTIVE_SHOPIFY_SHOPS_FILE, JSON.stringify(activeShops, null, '\t'));
+}
+
+function deleteShopFromDb (shop) {
+	let activeShops = {};
+	if (fs.existsSync(ACTIVE_SHOPIFY_SHOPS_FILE)) {
+		const saved = fs.readFileSync(ACTIVE_SHOPIFY_SHOPS_FILE).toString();
+		activeShops = JSON.parse(saved || '{}');
+	}
+	// save active shop to file, in prod this should be saved to the db
+	delete activeShops[shop];
+	fs.writeFileSync(ACTIVE_SHOPIFY_SHOPS_FILE, JSON.stringify(activeShops));
+}
+
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle ({ request }) {
 	const shop = request.query.get('shop');
 
-	const activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
+	let activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
+	// if not saved to memory, fetch from json file
+	if (!activeShop) {
+		activeShop = getShopFromDb(shop);
+	}
 
 	if (request.path === '/') {
 
@@ -85,8 +118,7 @@ export async function handle ({ request }) {
 		}
 	}
 
-	if (activeShop === undefined) {
-
+	if (!activeShop) {
 		const ctx = convert(request);
 
 		try {
@@ -101,7 +133,6 @@ export async function handle ({ request }) {
 	}
 
 
-	// handle /auth because sveltekit doesn't know about it
 	if (request.path === '/auth') {
 		// if shop is already stored, redirect to root
 		return {
@@ -112,4 +143,5 @@ export async function handle ({ request }) {
 		};
 	}
 
+	return null;
 }
