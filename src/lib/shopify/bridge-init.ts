@@ -1,4 +1,4 @@
-import { initAppBridge } from './bridge.js';
+import { initAppBridge } from './bridge';
 
 if (typeof window !== 'undefined') {
 	try {
