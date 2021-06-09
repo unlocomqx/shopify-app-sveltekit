@@ -3,6 +3,7 @@ import { verifyRequest } from '@shopify/koa-shopify-auth';
 import { initContext } from '$lib/shopify/context';
 import { GraphqlClient } from '@shopify/shopify-api/dist/clients/graphql';
 import loadCurrentSession from '@shopify/shopify-api/dist/utils/load-current-session';
+import type { ParameterizedContext } from 'koa';
 
 initContext();
 
@@ -19,11 +20,11 @@ export async function get() {
  * @type {import('@sveltejs/kit').RequestHandler}
  */
 export async function post(request) {
-	const ctx = convert(request);
+	const ctx:ParameterizedContext = convert(request);
 
 	const verifyFn = verifyRequest({ returnHeader: true });
 
-	await verifyFn(ctx);
+	await verifyFn(ctx, null);
 
 	if (ctx.headers['x-shopify-api-request-failure-reauthorize']) {
 		return {
@@ -42,7 +43,7 @@ export async function post(request) {
 			data: request.body
 		});
 
-		let headers = Object.fromEntries(response.headers);
+		const headers = Object.fromEntries(response.headers);
 
 		delete headers['content-encoding'];
 
