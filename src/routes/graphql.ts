@@ -1,16 +1,16 @@
+import { initContext } from '$lib/shopify/context';
 import { convert } from '$lib/shopify/request';
 import { verifyRequest } from '@shopify/koa-shopify-auth';
-import { initContext } from '$lib/shopify/context';
 import { GraphqlClient } from '@shopify/shopify-api/dist/clients/graphql';
 import loadCurrentSession from '@shopify/shopify-api/dist/utils/load-current-session';
-import type { ParameterizedContext } from 'koa';
+import type { DefaultContext } from 'koa';
 
 initContext();
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function get() {
+export async function get () {
 	return {
 		status: 401
 	};
@@ -19,18 +19,18 @@ export async function get() {
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function post(request) {
-	const ctx:ParameterizedContext = convert(request);
+export async function post (request) {
+	const ctx: DefaultContext = convert(request);
 
 	const verifyFn = verifyRequest({ returnHeader: true });
 
-	await verifyFn(ctx, null);
+	await verifyFn(ctx as any, null);
 
 	if (ctx.headers['x-shopify-api-request-failure-reauthorize']) {
 		return {
-			status: ctx.status,
+			status : ctx.status,
 			headers: ctx.headers,
-			body: null
+			body   : null
 		};
 	}
 
@@ -48,9 +48,9 @@ export async function post(request) {
 		delete headers['content-encoding'];
 
 		return {
-			status: 200,
+			status : 200,
 			headers: headers,
-			body: JSON.stringify(response.body)
+			body   : JSON.stringify(response.body)
 		};
 	} catch (e) {
 		let status;
