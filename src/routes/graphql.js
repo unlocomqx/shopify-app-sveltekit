@@ -21,9 +21,9 @@ export async function get() {
 export async function post(request) {
 	const ctx = convert(request);
 
-	const verify = verifyRequest({ returnHeader: true });
+	const verifyFn = verifyRequest({ returnHeader: true });
 
-	await verify(ctx);
+	await verifyFn(ctx);
 
 	if (ctx.headers['x-shopify-api-request-failure-reauthorize']) {
 		return {
