@@ -16,12 +16,20 @@ export function getApp (shop = null, host = null) {
 		host = urlParams.get('host');
 	}
 
-	return createApp({
+	if ((!shop || !host) && (window as any).shopifyApp) {
+		return (window as any).shopifyApp;
+	}
+
+	const app = createApp({
 		apiKey       : process.env.SHOPIFY_API_KEY,
 		shopOrigin   : shop,
 		host,
 		forceRedirect: false
 	} as AppConfigV1 & AppConfigV2);
+
+	(window as any).shopifyApp = app;
+
+	return app;
 }
 
 export function initAppBridge () {

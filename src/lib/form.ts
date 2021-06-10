@@ -1,9 +1,11 @@
 // this action (https://svelte.dev/tutorial/actions) allows us to
 // progressively enhance a <form> that already works without JS
-export function enhance(form, { pending, error, result }) {
+import { authenticatedFetch } from '$lib/shopify/fetch';
+
+export function enhance (form, { pending, error, result }) {
 	let current_token;
 
-	async function handle_submit(e) {
+	async function handle_submit (e) {
 		const token = (current_token = {});
 
 		e.preventDefault();
@@ -13,8 +15,9 @@ export function enhance(form, { pending, error, result }) {
 		if (pending) pending(body, form);
 
 		try {
-			const res = await fetch(form.action, {
-				method: form.method,
+			const fetchFunction = authenticatedFetch();
+			const res = await fetchFunction(form.action, {
+				method : form.method,
 				headers: {
 					accept: 'application/json'
 				},
@@ -42,7 +45,7 @@ export function enhance(form, { pending, error, result }) {
 	form.addEventListener('submit', handle_submit);
 
 	return {
-		destroy() {
+		destroy () {
 			form.removeEventListener('submit', handle_submit);
 		}
 	};
