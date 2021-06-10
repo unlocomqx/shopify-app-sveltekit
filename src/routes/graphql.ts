@@ -1,6 +1,5 @@
 import { initContext } from '$lib/shopify/context';
 import { convert } from '$lib/shopify/request';
-import { verifyRequest } from '@shopify/koa-shopify-auth';
 import { GraphqlClient } from '@shopify/shopify-api/dist/clients/graphql';
 import loadCurrentSession from '@shopify/shopify-api/dist/utils/load-current-session';
 import type { DefaultContext } from 'koa';
@@ -21,18 +20,6 @@ export async function get () {
  */
 export async function post (request) {
 	const ctx: DefaultContext = convert(request);
-
-	const verifyFn = verifyRequest({ returnHeader: true });
-
-	await verifyFn(ctx as any, null);
-
-	if (ctx.headers['x-shopify-api-request-failure-reauthorize']) {
-		return {
-			status : ctx.status,
-			headers: ctx.headers,
-			body   : null
-		};
-	}
 
 	const session = await loadCurrentSession(ctx.req, ctx.res);
 

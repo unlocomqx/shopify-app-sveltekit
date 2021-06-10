@@ -1,9 +1,17 @@
+import { convert } from '$lib/shopify/request';
+import loadCurrentSession from '@shopify/shopify-api/dist/utils/load-current-session';
+import type { DefaultContext } from 'koa';
 import { api } from './_api';
 
 // GET /todos.json
 export const get = async (request) => {
-	// request.locals.userid comes from src/hooks.js
-	const response = await api(request, `todos/${request.locals.userid}`);
+
+	const ctx: DefaultContext = convert(request);
+
+	const session = await loadCurrentSession(ctx.req, ctx.res);
+
+	// associate todos with the current shop
+	const response = await api(request, `todos/${session.shop}`);
 
 	if (response.status === 404) {
 		// user hasn't created a todo list.

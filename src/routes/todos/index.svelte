@@ -1,9 +1,11 @@
 <script context="module">
 	import { enhance } from '$lib/form';
+	import { authenticatedFetch } from '$lib/shopify/fetch';
 
 	// see https://kit.svelte.dev/docs#loading
-	export const load = async ({ fetch }) => {
-		const res = await fetch('/todos.json');
+	export const load = async () => {
+		const fetchFunction = authenticatedFetch();
+		const res = await fetchFunction('/todos.json');
 
 		if (res.ok) {
 			const todos = await res.json();

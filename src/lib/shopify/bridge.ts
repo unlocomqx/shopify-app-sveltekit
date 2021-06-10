@@ -6,6 +6,7 @@ export function getApp (shop = null, host = null) {
 	if (typeof window === 'undefined') {
 		return null;
 	}
+
 	if (!shop) {
 		const urlParams = new URLSearchParams(window.location.search);
 		shop = urlParams.get('shop');

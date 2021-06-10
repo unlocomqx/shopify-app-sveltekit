@@ -8,14 +8,9 @@
 	(The data on the todo app will expire periodically; no
 	guarantees are made. Don't use it to organise your life.)
 */
-
 const base = 'https://api.svelte.dev';
 
-export async function api(request, resource, data) {
-	// user must have a cookie set
-	if (!request.locals.userid) {
-		return { status: 401 };
-	}
+export async function api(request, resource, data = undefined) {
 
 	const res = await fetch(`${base}/${resource}`, {
 		method: request.method,
