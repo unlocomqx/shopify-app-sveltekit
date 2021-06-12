@@ -5,6 +5,7 @@
 <script>
 	import Counter from '$lib/Counter/index.svelte';
 	import Products from '$lib/Products.svelte';
+	import CreateCustomer from '$lib/CreateCustomer.svelte';
 </script>
 
 <svelte:head>
@@ -30,6 +31,8 @@
 	<Counter />
 
 	<Products />
+
+	<CreateCustomer/>
 </section>
 
 <style>
