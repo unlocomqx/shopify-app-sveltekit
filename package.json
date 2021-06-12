@@ -47,6 +47,6 @@
     "dotenv": "^10.0.0",
     "express-http-context": "^1.2.4",
     "graphql": "^15.5.0",
-    "svelte-apollo": "^0.4.0"
+    "svelte-apollo-client": "^0.0.1"
   }
 }

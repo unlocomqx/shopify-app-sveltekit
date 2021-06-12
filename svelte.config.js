@@ -22,7 +22,7 @@ const config = {
 				hmr: {
 					host: 'localhost',
 					protocol: 'ws'
-				}
+				},
 			},
 			resolve: {
 				alias: {

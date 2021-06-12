@@ -2,16 +2,12 @@
 	import Header from '$lib/Header/index.svelte';
 	import '../app.css';
 	import '$lib/shopify/bridge-init';
-
-	import ApolloProvider from '$lib/ApolloProvider.svelte';
 </script>
 
 <Header />
 
 <main>
-	<ApolloProvider>
-		<slot />
-	</ApolloProvider>
+	<slot />
 </main>
 
 <footer>
