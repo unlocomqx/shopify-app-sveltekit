@@ -1,6 +1,7 @@
 {
   "name": "~TODO~",
   "version": "0.0.1",
+  "license": "MIT",
   "scripts": {
     "dev": "svelte-kit dev --port 8081",
     "_dev": "npm run build && npm run preview",
