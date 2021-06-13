@@ -1,24 +1,15 @@
 <script lang='ts'>
 
 	import { gql } from '@apollo/client/core';
-	import { client } from './graphql/client';
+	import { client } from '$lib/graphql/client';
 
-	let name = 'name';
-	let lastname = 'lastname';
-	let email = 'test@teleworm.us';
 	let mutation;
-	let loading;
 
 	async function createCustomer () {
-		loading = 'loading...';
 		mutation = null;
-		mutation = await client.mutate(gql`mutation {
+		mutation = await client.mutate(gql`mutation customerCreate($input: CustomerInput!) {
 			customerCreate(
-				input: {
-					firstName: "${ name }",
-					lastName: "${ lastname }",
-					email: "${ email }"
-				}
+				input: $input
 			)
 			{
 				customer {
@@ -31,28 +22,20 @@
 					message
 				}
 			}
-		}`);
-		loading = '';
+		}`, {
+			variables: {
+				input: {
+					firstName: "name",
+					lastName: "lastname",
+					email: "email@email.com"
+				}
+			}
+		});
 	}
 </script>
 
-<div style='margin: 10px 0'>
-	<label for='name'>
-		<span>Name</span>
-		<input type='text' id='name' bind:value={name}>
-	</label>
-	<label for='lastname'>
-		<span>Lastname</span>
-		<input type='text' id='lastname' bind:value={lastname}>
-	</label>
-	<label for='email'>
-		<span>Email</span>
-		<input type='email' required id='email' bind:value={email}>
-	</label>
+<div>
 	<button on:click={createCustomer}>Create customer</button>
-	<div>
-		{loading || ""}
-	</div>
 	<div>
 		{#if mutation}
 			{#if mutation.data.customerCreate.customer}
@@ -71,15 +54,3 @@
 		{/if}
 	</div>
 </div>
-
-<style>
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-
-  label > span {
-    display: inline-block;
-    width: 100px;
-  }
-</style>
