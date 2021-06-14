@@ -19,6 +19,5 @@ export async function handle ({ request, render }) {
 		}
 	}
 
-	console.log(request.path);
 	return render(request);
 }
