@@ -1,6 +1,5 @@
 import { handle as shopifyHandle } from '$lib/shopify/handler';
 import { verify } from '$lib/shopify/verify';
-import type { ServerRequest } from '@sveltejs/kit/types/hooks';
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle ({ request, render }) {
