@@ -1,9 +1,11 @@
 import { handle as shopifyHandle } from '$lib/shopify/handler';
 import { verify } from '$lib/shopify/verify';
+import type { ServerRequest } from '@sveltejs/kit/types/hooks';
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle ({ request, render }) {
 	const shopifyRoutes = ['/', '/auth', '/auth/inline', '/auth/callback'];
+	console.log(request.path);
 	if (shopifyRoutes.includes(request.path)) {
 		const shopifyRes = await shopifyHandle({ request });
 		if (shopifyRes) {
@@ -17,5 +19,6 @@ export async function handle ({ request, render }) {
 		}
 	}
 
+	console.log(request.path);
 	return render(request);
 }

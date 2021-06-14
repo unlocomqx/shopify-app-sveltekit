@@ -13,7 +13,8 @@ export async function verify (request: ServerRequest) {
 		return {
 			status : 401,
 			headers: {
-				location: `${ process.env.HOST }/?shop=${ process.env.SHOP }`
+				'X-Shopify-API-Request-Failure-Reauthorize'    : '1',
+				'X-Shopify-API-Request-Failure-Reauthorize-Url': `${ process.env.HOST }/?shop=${ process.env.SHOP }`
 			},
 			body   : null
 		};
