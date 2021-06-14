@@ -20,22 +20,24 @@
 	}
 </script>
 
-<p>
+<div>
 	<button on:click={getProducts}>Get the list of products using GraphQL</button>
 
-	{#if products}
-		{#if $products.loading}
-			Loading...
-		{:else if $products.error}
-			Error: {$products.error.message}
-		{:else}
-			<ul>
-				{#each $products.data.products.edges as product}
-					<li>
-						Product: {product.node.title}
-					</li>
-				{/each}
-			</ul>
+	<div>
+		{#if products}
+			{#if $products.loading}
+				Loading...
+			{:else if $products.error}
+				Error: {$products.error.message}
+			{:else}
+				<ul>
+					{#each $products.data.products.edges as product}
+						<li>
+							Product: {product.node.title}
+						</li>
+					{/each}
+				</ul>
+			{/if}
 		{/if}
-	{/if}
-</p>
+	</div>
+</div>
