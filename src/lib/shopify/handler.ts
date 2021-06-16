@@ -38,6 +38,7 @@ const auth = createShopifyAuth({
 		});
 
 		if (!response.success) {
+			// eslint-disable-next-line no-console
 			console.log(`Failed to register APP_UNINSTALLED webhook: ${ response.result }`);
 		}
 		// Redirect to app with shop parameter upon auth
@@ -126,6 +127,7 @@ export async function handle ({ request }) {
 				return true;
 			});
 		} catch (e) {
+			// eslint-disable-next-line no-console
 			console.log(e.message);
 		}
 
