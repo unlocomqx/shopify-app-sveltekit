@@ -6,6 +6,9 @@ Warning: Expermimental code ahead
 
 ```shell
 git clone https://github.com/unlocomqx/shopify-app-sveltekit my-app
+# OR if you want to remove the repo git history
+npx degit https://github.com/unlocomqx/shopify-app-sveltekit my-app 
+# Then
 cd my-app
 npm install
 # Switch to another folder
@@ -19,6 +22,14 @@ shopify serve
 ``` 
 
 ## Troubleshooting
+
 If you encounter a 500 error, clear the browser cache and retry (it's a redirect cache issue)  
 If you encounter a 403 error, make sure to clear the cookies then retry shopify serve again.  
-If you encounter another issue, you can report it [here](https://github.com/unlocomqx/shopify-app-sveltekit/issues)  
+If you encounter another issue, you can report
+it [here](https://github.com/unlocomqx/shopify-app-sveltekit/issues)
+
+## A better DX approach
+
+Using `ngrok` can be slow and can give you a bad developer experience. Follow these instructions to
+improve your DX.  
+https://dev.to/unlocomqx/a-much-better-dx-for-shopify-apps-38ln
