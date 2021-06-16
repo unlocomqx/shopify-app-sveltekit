@@ -4,3 +4,4 @@ node_modules
 /package
 build
 .storage/*.json
+.shopify-cli.yml
