@@ -1,6 +1,6 @@
 import { getApp } from '$lib/shopify/bridge';
 import { authenticatedFetch } from '@shopify/app-bridge-utils';
-import { Redirect } from '@shopify/app-bridge/actions';
+import { Redirect } from '@shopify/app-bridge/actions/index.js';
 
 function shopifyFetch () {
 	const app = getApp(process.env.SHOP);

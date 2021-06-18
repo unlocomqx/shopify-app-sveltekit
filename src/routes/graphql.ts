@@ -1,7 +1,7 @@
 import { initContext } from '$lib/shopify/context';
 import { convert } from '$lib/shopify/request';
-import { GraphqlClient } from '@shopify/shopify-api/dist/clients/graphql';
-import loadCurrentSession from '@shopify/shopify-api/dist/utils/load-current-session';
+import { GraphqlClient } from '@shopify/shopify-api/dist/clients/graphql/index.js';
+import loadCurrentSession from '@shopify/shopify-api/dist/utils/load-current-session.js';
 import type { DefaultContext } from 'koa';
 
 initContext();

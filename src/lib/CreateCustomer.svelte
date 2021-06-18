@@ -1,6 +1,6 @@
 <script lang='ts'>
 
-	import { gql } from '@apollo/client/core';
+	import { gql } from '@apollo/client/core/core.cjs.js';
 	import { client } from '$lib/graphql/client';
 
 	let name = 'name';

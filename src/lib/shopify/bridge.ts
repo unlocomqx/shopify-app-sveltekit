@@ -1,6 +1,6 @@
 import type { AppConfigV1, AppConfigV2 } from '@shopify/app-bridge';
 import createApp from '@shopify/app-bridge';
-import { Redirect } from '@shopify/app-bridge/actions/index';
+import { Redirect } from '@shopify/app-bridge/actions/index.js';
 
 export function getApp (shop = null, host = null) {
 	if (typeof window === 'undefined') {

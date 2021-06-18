@@ -22,14 +22,19 @@ const config = {
 				hmr: {
 					host: 'localhost',
 					protocol: 'ws'
-				},
+				}
 			},
 			resolve: {
-				alias: {
-					'@shopify/shopify-api/dist/error': '@shopify/shopify-api/dist/error.js',
-					// workaround for https://github.com/timhall/svelte-apollo/issues/97
-					'svelte-apollo': '/node_modules/svelte-apollo/dist/svelte-apollo.es.js'
-				},
+				alias: [
+					{
+						find: '@shopify/shopify-api/dist/error',
+						replacement: '@shopify/shopify-api/dist/error.js',
+					},
+					{
+						find: /@apollo\/client\/core/g,
+						replacement: '@apollo/client/core/core.cjs.js',
+					},
+				]
 			},
 			plugins: [
 				replaceCodePlugin({

@@ -1,5 +1,5 @@
 import { convert } from '$lib/shopify/request';
-import loadCurrentSession from '@shopify/shopify-api/dist/utils/load-current-session';
+import loadCurrentSession from '@shopify/shopify-api/dist/utils/load-current-session.js';
 import type { DefaultContext } from 'koa';
 import { api } from './_api';
 
