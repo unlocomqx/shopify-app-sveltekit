@@ -3,8 +3,8 @@
 	import { gql } from '@apollo/client/core/core.cjs.js';
 	import { client } from '$lib/graphql/client';
 
-	let name = 'name';
-	let lastname = 'lastname';
+	let firstName = 'name';
+	let lastName = 'lastname';
 	let email = 'test@teleworm.us';
 	let mutation;
 	let loading;
@@ -30,9 +30,9 @@
 		}`, {
 			variables: {
 				input: {
-					firstName: "name",
-					lastName: "lastname",
-					email: "email@email.com"
+					firstName,
+					lastName,
+					email
 				}
 			}
 		});
@@ -43,11 +43,11 @@
 <div style='margin: 10px 0'>
 	<label for='name'>
 		<span>Name</span>
-		<input type='text' id='name' bind:value={name}>
+		<input type='text' id='name' bind:value={firstName}>
 	</label>
 	<label for='lastname'>
 		<span>Lastname</span>
-		<input type='text' id='lastname' bind:value={lastname}>
+		<input type='text' id='lastname' bind:value={lastName}>
 	</label>
 	<label for='email'>
 		<span>Email</span>
