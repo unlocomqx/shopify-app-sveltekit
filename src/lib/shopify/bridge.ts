@@ -16,20 +16,17 @@ export function getApp (shop = null, host = null) {
 		host = urlParams.get('host');
 	}
 
-	if ((!shop || !host) && (window as any).shopifyApp) {
-		return (window as any).shopifyApp;
+	try {
+		return createApp({
+			apiKey       : process.env.SHOPIFY_API_KEY,
+			shopOrigin   : shop,
+			host,
+			forceRedirect: false
+		} as AppConfigV1 & AppConfigV2);
+	} catch (e) {
+		// eslint-disable-next-line no-console
+		console.error('Could not create app', e.message);
 	}
-
-	const app = createApp({
-		apiKey       : process.env.SHOPIFY_API_KEY,
-		shopOrigin   : shop,
-		host,
-		forceRedirect: false
-	} as AppConfigV1 & AppConfigV2);
-
-	(window as any).shopifyApp = app;
-
-	return app;
 }
 
 export function initAppBridge () {
@@ -45,7 +42,6 @@ export function initAppBridge () {
 	if (host) {
 		const createAppFn = typeof createApp === 'function' ? createApp : (createApp as any).default;
 		createAppFn({
-			// replaced by vite-plugin-replace in svelte.config.js
 			apiKey       : process.env.SHOPIFY_API_KEY,
 			host,
 			forceRedirect: true
@@ -54,11 +50,8 @@ export function initAppBridge () {
 		const permissionUrl =
 			`https://${ shop }/admin/oauth/authorize?client_id=${ process.env.SHOPIFY_API_KEY }&scope=read_products,read_content&redirect_uri=${ process.env.HOST }/auth/callback`;
 
-		// If the current window is the 'parent', change the URL by setting location.href
 		if (window.top == window.self) {
 			window.location.assign(permissionUrl);
-
-			// If the current window is the 'child', change the parent's URL with Shopify App Bridge's Redirect action
 		} else {
 			const app = getApp(shop, host);
 			Redirect.create(app).dispatch(Redirect.Action.REMOTE, permissionUrl);
