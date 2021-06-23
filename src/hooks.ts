@@ -8,7 +8,6 @@ export async function handle<Locals> ({ request, render }: {
 	render: (request: ServerRequest<Locals>) => ServerResponse | Promise<ServerResponse>;
 }) {
 
-
 	const shopifyRes = await shopifyHandle({ request });
 	if (shopifyRes) {
 		return shopifyRes;
@@ -21,7 +20,6 @@ export async function handle<Locals> ({ request, render }: {
 			return redirectToAuth;
 		}
 	}
-
 
 	return render(request);
 }
