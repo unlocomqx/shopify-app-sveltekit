@@ -1,17 +1,15 @@
+import { deleteShopFromDb, getShopFromDb, saveShopToDb } from '$lib/database/session';
 import { initContext } from '$lib/shopify/context';
 import { convert } from '$lib/shopify/request';
 import shopifyAuth from '@shopify/koa-shopify-auth';
 import { Shopify } from '@shopify/shopify-api';
 import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
 
 // quirk of vite (shopifyAuth is not a function on prod build)
 const createShopifyAuth = typeof shopifyAuth === 'function' ? shopifyAuth : (shopifyAuth as any).default;
 
 dotenv.config();
 
-const ACTIVE_SHOPIFY_SHOPS_FILE = path.resolve('.storage/shops.json');
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
 // persist this object in your app.
 const ACTIVE_SHOPIFY_SHOPS = {};
@@ -45,37 +43,6 @@ const auth = createShopifyAuth({
 		ctx.redirect(`/?shop=${ shop }&host=${ host }`);
 	}
 });
-
-function getShopFromDb (shop) {
-	if (fs.existsSync(ACTIVE_SHOPIFY_SHOPS_FILE)) {
-		const saved = fs.readFileSync(ACTIVE_SHOPIFY_SHOPS_FILE).toString();
-		const activeShops = JSON.parse(saved || '{}');
-		return activeShops[shop];
-	}
-	return null;
-}
-
-function saveShopToDb (shop, shopData) {
-	let activeShops = {};
-	if (fs.existsSync(ACTIVE_SHOPIFY_SHOPS_FILE)) {
-		const saved = fs.readFileSync(ACTIVE_SHOPIFY_SHOPS_FILE).toString();
-		activeShops = JSON.parse(saved || '{}');
-	}
-	// save active shop to file, in prod this should be saved to the db
-	activeShops[shop] = shopData;
-	fs.writeFileSync(ACTIVE_SHOPIFY_SHOPS_FILE, JSON.stringify(activeShops, null, '\t'));
-}
-
-function deleteShopFromDb (shop) {
-	let activeShops = {};
-	if (fs.existsSync(ACTIVE_SHOPIFY_SHOPS_FILE)) {
-		const saved = fs.readFileSync(ACTIVE_SHOPIFY_SHOPS_FILE).toString();
-		activeShops = JSON.parse(saved || '{}');
-	}
-	// save active shop to file, in prod this should be saved to the db
-	delete activeShops[shop];
-	fs.writeFileSync(ACTIVE_SHOPIFY_SHOPS_FILE, JSON.stringify(activeShops));
-}
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle ({ request }) {
