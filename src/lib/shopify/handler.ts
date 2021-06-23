@@ -44,7 +44,7 @@ const auth = createShopifyAuth({
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle ({ request }) {
 	const shop = request.query.get('shop');
-	const host = request.query.get('shop');
+	const host = request.query.get('host');
 
 	let activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
 	// if not saved to memory, fetch from json file
