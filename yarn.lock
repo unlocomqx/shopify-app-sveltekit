@@ -1776,10 +1776,10 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-svelte-apollo-client@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/svelte-apollo-client/-/svelte-apollo-client-0.0.7.tgz#1e8e0f0c09be8f411d29199651a895b56c540b55"
-  integrity sha512-yJpznnAUmA3f4lBmU0cSV698Js4Kfx6X9F9WXVOJFd83ZOkTqZ/zLjzRhLZTtU7U7ZxjmHXwltaQF+VW7tRKIg==
+svelte-apollo-client@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/svelte-apollo-client/-/svelte-apollo-client-0.0.8.tgz#0520086a0df6c92c1e6255496f1ed59ca7c78426"
+  integrity sha512-4wq/MvetpU8wly5pn/nTGisdTgaa+BlP/6owUk5qAn/hftoKWmZIv7Qz1LB9tx3NI+UgQplPWCKb8UL9si4JhQ==
 
 svelte-check@^2.1.0:
   version "2.1.0"
