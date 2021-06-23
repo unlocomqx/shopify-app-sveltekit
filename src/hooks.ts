@@ -7,20 +7,21 @@ export async function handle<Locals> ({ request, render }: {
 	request: ServerRequest<Locals>;
 	render: (request: ServerRequest<Locals>) => ServerResponse | Promise<ServerResponse>;
 }) {
-	const shopifyRoutes = ['/', '/auth', '/auth/inline', '/auth/callback'];
 
-	if (shopifyRoutes.includes(request.path)) {
-		const shopifyRes = await shopifyHandle({ request });
-		if (shopifyRes) {
-			return shopifyRes;
-		}
-	} else {
+
+	const shopifyRes = await shopifyHandle({ request });
+	if (shopifyRes) {
+		return shopifyRes;
+	}
+
+	if (request.path !== '/') {
 		// every other request must have a session
 		const redirectToAuth = await verify(request);
 		if (redirectToAuth) {
 			return redirectToAuth;
 		}
 	}
+
 
 	return render(request);
 }

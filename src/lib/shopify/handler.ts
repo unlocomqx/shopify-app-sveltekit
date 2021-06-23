@@ -44,6 +44,7 @@ const auth = createShopifyAuth({
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle ({ request }) {
 	const shop = request.query.get('shop');
+	const host = request.query.get('shop');
 
 	let activeShop = ACTIVE_SHOPIFY_SHOPS[shop];
 	// if not saved to memory, fetch from json file
@@ -53,9 +54,8 @@ export async function handle ({ request }) {
 
 	if (request.path === '/') {
 
-		const host = request.query.get('host');
-
-		if (!shop && !host) {
+		if (!shop) {
+			// if the url is http://localhost:8081
 			return {
 				status : 302,
 				headers: {
@@ -64,49 +64,41 @@ export async function handle ({ request }) {
 			};
 		}
 
-		if (activeShop && !host) {
+		if (!activeShop) {
+			// redirect to auth if no shop if registered
 			return {
-				status : 302,
+				status : 301,
 				headers: {
-					location: `/?shop=${ shop }&host=${ activeShop.host }`
+					location: `${ process.env['HOST'] }/auth?shop=${ process.env['SHOP'] }`
 				}
 			};
 		}
 
-		if (!activeShop) {
+		if ((!host || !shop) && activeShop && activeShop.host) {
+			// if we have a registered shop but the url is not complete
 			return {
-				status : 302,
+				status : 301,
 				headers: {
-					location: `/auth?shop=${ shop }`
+					location: `${ process.env['HOST'] }/?shop=${ process.env['SHOP'] }&host=${ activeShop.host }`
 				}
 			};
 		}
 	}
 
-	if (!activeShop) {
+	// handle shopify auth
+	if (['/auth', '/auth/inline', '/auth/callback', '/auth/enable_cookies'].includes(request.path)) {
 		const ctx = convert(request);
 
 		try {
-			await auth(ctx, () => {
+			await auth(ctx as any, () => {
 				return true;
 			});
 		} catch (e) {
 			// eslint-disable-next-line no-console
-			console.log(e.message);
+			console.error(e.message);
 		}
 
 		return ctx;
-	}
-
-
-	if (request.path === '/auth') {
-		// if shop is already stored, redirect to root
-		return {
-			status : 302,
-			headers: {
-				location: `/?shop=${ shop }&host=${ activeShop.host }`
-			}
-		};
 	}
 
 	return null;
