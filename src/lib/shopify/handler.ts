@@ -1,12 +1,9 @@
 import { deleteShopFromDb, getShopFromDb, saveShopToDb } from '$lib/database/session';
+import { createShopifyAuth } from '$lib/helpers/shopify-auth';
 import { initContext } from '$lib/shopify/context';
 import { convert } from '$lib/shopify/request';
-import shopifyAuth from '@shopify/koa-shopify-auth';
 import { Shopify } from '@shopify/shopify-api';
 import dotenv from 'dotenv';
-
-// quirk of vite (shopifyAuth is not a function on prod build)
-const createShopifyAuth = typeof shopifyAuth === 'function' ? shopifyAuth : (shopifyAuth as any).default;
 
 dotenv.config();
 
